@@ -1,7 +1,7 @@
 import 'package:flutter_getx_template/env.dart';
 
 // 开发环境
-const SERVER_HOST_DEV = 'http://192.168.3.21:30366';
+const SERVER_HOST_DEV = 'http://111.0.98.212:8090';
 
 // 生产环境
 // 生产环境地址禁止随意修改！！！

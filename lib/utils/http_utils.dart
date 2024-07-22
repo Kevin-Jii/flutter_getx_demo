@@ -1,31 +1,22 @@
-import 'dart:async';
-import 'package:dio/dio.dart';
 import 'package:cookie_jar/cookie_jar.dart';
+import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
-import 'package:flutter_getx_template/config.dart';
-import 'package:flutter_getx_template/utils/my_utils.dart';
 import 'package:flutter_loggy_dio/flutter_loggy_dio.dart';
 
-/*
-  * http 操作类
-  *
-  * 手册
-  * https://github.com/flutterchina/dio/blob/master/README-ZH.md
-  *
-  * 从3.x升级到 4.x
-  * https://github.com/flutterchina/dio/blob/master/migration_to_4.x.md
-*/
+import '../config.dart';
+import 'my_utils.dart';
+
 class HttpUtils {
   static HttpUtils _instance = HttpUtils._internal();
 
   factory HttpUtils() => _instance;
 
   late Dio dio;
-  CancelToken cancelToken = new CancelToken();
+  CancelToken cancelToken = CancelToken();
 
   HttpUtils._internal() {
     // BaseOptions、Options、RequestOptions 都可以配置参数，优先级别依次递增，且可以根据优先级别覆盖参数
-    BaseOptions options = new BaseOptions(
+    BaseOptions options = BaseOptions(
       // 请求基地址,可以包含子路径
       baseUrl: SERVER_API_URL,
 
@@ -41,17 +32,18 @@ class HttpUtils {
       responseType: ResponseType.json,
     );
 
-    dio = new Dio(options);
+    dio = Dio(options);
 
     // Cookie管理
     CookieJar cookieJar = CookieJar();
     dio.interceptors.add(CookieManager(cookieJar));
-    dio.interceptors.add(LoggyDioInterceptor(requestHeader: true, requestBody: true));
+    dio.interceptors
+        .add(LoggyDioInterceptor(requestHeader: true, requestBody: true));
 
     // 添加拦截器
     dio.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) {
       // 在请求被发送之前做一些预处理
-      return handler.next(options); //continue
+      return handler.next(options); // continue
     }, onResponse: (response, handler) {
       // 在返回响应数据之前做一些预处理
       return handler.next(response);
@@ -72,14 +64,12 @@ class HttpUtils {
 
   /// 读取token
   Map<String, dynamic> getAuthorizationHeader() {
-    var headers;
-    String? token = null;
+    String? token = null; // 这里你需要根据实际情况获取token
     if (token != null) {
-      headers = {
-        'Authorization': 'JWT $token',
-      };
+      return {'Authorization': 'JWT $token'};
+    } else {
+      return {}; // 返回一个空的 Map，而不是 null
     }
-    return headers;
   }
 
   /// restful get 操作
@@ -90,7 +80,22 @@ class HttpUtils {
     if (_authorization.isNotEmpty) {
       requestOptions = requestOptions.copyWith(headers: _authorization);
     }
-    var response = await dio.get(path, queryParameters: params, options: requestOptions, cancelToken: cancelToken);
+
+    // 确保 params 是 Map<String, dynamic> 类型
+    Map<String, dynamic> queryParameters = {};
+    if (params != null) {
+      if (params is Map<String, dynamic>) {
+        queryParameters = params;
+      } else {
+        // 如果 params 不是 Map<String, dynamic> 类型，可以进行转换或抛出错误
+        throw ArgumentError('Params should be of type Map<String, dynamic>');
+      }
+    }
+
+    var response = await dio.get(path,
+        queryParameters: queryParameters,
+        options: requestOptions,
+        cancelToken: cancelToken);
     return response.data;
   }
 
@@ -101,7 +106,8 @@ class HttpUtils {
     if (_authorization.isNotEmpty) {
       requestOptions = requestOptions.copyWith(headers: _authorization);
     }
-    var response = await dio.post(path, data: params, options: requestOptions, cancelToken: cancelToken);
+    var response = await dio.post(path,
+        data: params, options: requestOptions, cancelToken: cancelToken);
     return response.data;
   }
 
@@ -112,7 +118,8 @@ class HttpUtils {
     if (_authorization.isNotEmpty) {
       requestOptions = requestOptions.copyWith(headers: _authorization);
     }
-    var response = await dio.put(path, data: params, options: requestOptions, cancelToken: cancelToken);
+    var response = await dio.put(path,
+        data: params, options: requestOptions, cancelToken: cancelToken);
     return response.data;
   }
 
@@ -125,7 +132,8 @@ class HttpUtils {
       requestOptions = requestOptions.copyWith(headers: _authorization);
     }
 
-    var response = await dio.patch(path, data: params, options: requestOptions, cancelToken: cancelToken);
+    var response = await dio.patch(path,
+        data: params, options: requestOptions, cancelToken: cancelToken);
 
     return response.data;
   }
@@ -138,7 +146,8 @@ class HttpUtils {
     if (_authorization.isNotEmpty) {
       requestOptions = requestOptions.copyWith(headers: _authorization);
     }
-    var response = await dio.delete(path, data: params, options: requestOptions, cancelToken: cancelToken);
+    var response = await dio.delete(path,
+        data: params, options: requestOptions, cancelToken: cancelToken);
     return response.data;
   }
 
@@ -150,8 +159,10 @@ class HttpUtils {
     if (_authorization.isNotEmpty) {
       requestOptions = requestOptions.copyWith(headers: _authorization);
     }
-    var response =
-        await dio.post(path, data: FormData.fromMap(params), options: requestOptions, cancelToken: cancelToken);
+    var response = await dio.post(path,
+        data: FormData.fromMap(params),
+        options: requestOptions,
+        cancelToken: cancelToken);
     return response.data;
   }
 
@@ -187,17 +198,23 @@ class HttpUtils {
             switch (errCode) {
               case 400:
                 {
-                  return ErrorEntity(code: errCode, message: error.response?.data['message'] ?? "请求语法错误");
+                  return ErrorEntity(
+                      code: errCode,
+                      message: error.response?.data['message'] ?? "请求语法错误");
                 }
 
               case 401:
                 {
-                  return ErrorEntity(code: errCode, message: error.response?.data['message'] ?? "没有权限");
+                  return ErrorEntity(
+                      code: errCode,
+                      message: error.response?.data['message'] ?? "没有权限");
                 }
 
               case 403:
                 {
-                  return ErrorEntity(code: errCode, message: error.response?.data['message'] ?? "服务器拒绝执行");
+                  return ErrorEntity(
+                      code: errCode,
+                      message: error.response?.data['message'] ?? "服务器拒绝执行");
                 }
               case 404:
                 {
@@ -205,7 +222,9 @@ class HttpUtils {
                 }
               case 405:
                 {
-                  return ErrorEntity(code: errCode, message: error.response?.data['message'] ?? "请求方法被禁止");
+                  return ErrorEntity(
+                      code: errCode,
+                      message: error.response?.data['message'] ?? "请求方法被禁止");
                 }
               case 500:
                 {
@@ -217,15 +236,21 @@ class HttpUtils {
                 }
               case 503:
                 {
-                  return ErrorEntity(code: errCode, message: error.response?.data['message'] ?? "服务器挂了");
+                  return ErrorEntity(
+                      code: errCode,
+                      message: error.response?.data['message'] ?? "服务器挂了");
                 }
               case 505:
                 {
-                  return ErrorEntity(code: errCode, message: error.response?.data['message'] ?? "不支持HTTP协议请求");
+                  return ErrorEntity(
+                      code: errCode,
+                      message:
+                          error.response?.data['message'] ?? "不支持HTTP协议请求");
                 }
               default:
                 {
-                  return ErrorEntity(code: errCode, message: error.response?.data['message']);
+                  return ErrorEntity(
+                      code: errCode, message: error.response?.data['message']);
                 }
             }
           } on Exception catch (_) {
@@ -247,6 +272,7 @@ class ErrorEntity implements Exception {
 
   ErrorEntity({required this.code, this.message});
 
+  @override
   String toString() {
     if (message == null) return "Exception";
     return "Exception: code $code, $message";

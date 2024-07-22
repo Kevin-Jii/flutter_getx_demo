@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_getx_template/global.dart';
 import 'package:flutter_getx_template/pages/Index/Index_controller.dart';
 import 'package:flutter_getx_template/pages/home/home_view.dart';
 import 'package:flutter_getx_template/pages/login/login_view.dart';
