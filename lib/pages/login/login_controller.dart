@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:get/get.dart';
 
-import '../../utils/http_utils.dart'; // For Uint8List
+import '../../utils/http_utils.dart'; // For HttpUtils
 
 class LoginController extends GetxController {
   var username = ''.obs;
@@ -33,18 +33,18 @@ class LoginController extends GetxController {
           var base64String = response['img'] as String;
           print('Base64 String: $base64String');
 
-          // 确保 base64 字符串的前缀部分没有被省略
+          // Ensure base64 string prefix is not omitted
           if (!base64String.startsWith('data:image/jpeg;base64,')) {
             base64String = 'data:image/jpeg;base64,' + base64String;
           }
 
-          // 解码 Base64 字符串
+          // Decode Base64 string
           var decodedBytes = base64Decode(base64String.split(',').last);
           print('Decoded Bytes Length: ${decodedBytes.length}');
           imageBytes.value = decodedBytes;
         }
 
-        // 存储 uuid
+        // Store uuid
         if (response.containsKey('uuid')) {
           uuid.value = response['uuid'] as String;
         } else {
@@ -71,18 +71,17 @@ class LoginController extends GetxController {
       });
       print(response['code']);
       if (response['code'] == 200) {
-        print('Response: $response'); // 打印完整的响应内容
+        print('Response: $response'); // Print the full response
 
-        // 登录成功处理逻辑
+        // Successful login logic
         Get.offNamed('/home');
       } else {
-        // 登录失败，刷新验证码
-
-        fetchVerificationCode(); // 刷新验证码
+        // Login failed, refresh verification code
+        fetchVerificationCode(); // Refresh verification code
       }
     } catch (e) {
-      Get.snackbar('登录失败', '登录请求发生异常: $e'); // 显示详细的异常信息
-      fetchVerificationCode(); // 刷新验证码
+      Get.snackbar('登录失败', '登录请求发生异常: $e'); // Show detailed error
+      fetchVerificationCode(); // Refresh verification code
     } finally {
       isLoading.value = false;
     }

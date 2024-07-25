@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:get/get.dart';
-import 'package:loggy/loggy.dart';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:loggy/loggy.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -28,7 +28,8 @@ class MyUtils {
   }
 
   /// 邮箱正则
-  static const String regexEmail = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*\$";
+  static const String regexEmail =
+      "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*\$";
 
   /// 检查是否是邮箱格式
   static bool isEmail(String input) {
@@ -52,13 +53,19 @@ class MyUtils {
   }
 
   /// 跳转页面，带渐变动画
-  static Future<dynamic>? startPageGradient(Widget page, {int duration = 350}) async {
-    return Get.to(page, transition: Transition.fadeIn, duration: Duration(milliseconds: duration));
+  static Future<dynamic>? startPageGradient(Widget page,
+      {int duration = 350}) async {
+    return Get.to(page,
+        transition: Transition.fadeIn,
+        duration: Duration(milliseconds: duration));
   }
 
   /// 从下往上划出
-  static Future<dynamic>? startPageUpAnim(Widget page, {int duration = 350}) async {
-    return Get.to(page, transition: Transition.downToUp, duration: Duration(milliseconds: duration));
+  static Future<dynamic>? startPageUpAnim(Widget page,
+      {int duration = 350}) async {
+    return Get.to(page,
+        transition: Transition.downToUp,
+        duration: Duration(milliseconds: duration));
   }
 
   /// 关闭页面
@@ -165,7 +172,8 @@ class MyUtils {
               Offstage(
                 offstage: !isShowCancel,
                 child: TextButton(
-                  child: Text(cancelText, style: const TextStyle(color: Colors.black)),
+                  child: Text(cancelText,
+                      style: const TextStyle(color: Colors.black)),
                   onPressed: () {
                     if (isAutoClose) Navigator.of(context).pop();
 
@@ -176,7 +184,8 @@ class MyUtils {
                 ),
               ),
               TextButton(
-                child: Text(confirmText, style: const TextStyle(color: Colors.black)),
+                child: Text(confirmText,
+                    style: const TextStyle(color: Colors.black)),
                 onPressed: () {
                   if (isAutoClose) Navigator.of(context).pop();
 
