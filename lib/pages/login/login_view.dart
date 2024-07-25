@@ -18,6 +18,7 @@ class LoginView extends StatelessWidget {
     double inputHeight = 50.0; // Input height
 
     return Scaffold(
+      resizeToAvoidBottomInset: false, // 禁止调整内容位置
       body: Stack(
         children: [
           // 渐变背景，从左下角到右上角
@@ -46,8 +47,8 @@ class LoginView extends StatelessWidget {
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
-                                    Color(0xFF008F7A),
-                                    Color(0xFFFF8066)
+                                    Color(0xFF21D4FD),
+                                    Color(0xFFB721FF)
                                   ],
                                   begin: Alignment.bottomLeft,
                                   end: Alignment.topRight,

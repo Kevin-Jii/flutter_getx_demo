@@ -69,19 +69,32 @@ class LoginController extends GetxController {
         'code': verificationCode.value,
         'uuid': uuid.value
       });
+
       print(response['code']);
       if (response['code'] == 200) {
         print('Response: $response'); // Print the full response
 
-        // Successful login logic
+        // 从响应中提取数据
+        var data = response['data'];
+        var token = data['token'];
+        var user = data['user'];
+        var userId = user['id'];
+        var userName = user['name'];
+
+        // 你可以在这里使用提取的数据，例如保存 token 和用户信息
+        print('Token: $token');
+        print('User ID: $userId');
+        print('User Name: $userName');
+
+        // 成功登录逻辑
         Get.offNamed('/home');
       } else {
-        // Login failed, refresh verification code
-        fetchVerificationCode(); // Refresh verification code
+        // 登录失败，刷新验证码
+        fetchVerificationCode(); // 刷新验证码
       }
     } catch (e) {
-      Get.snackbar('登录失败', '登录请求发生异常: $e'); // Show detailed error
-      fetchVerificationCode(); // Refresh verification code
+      Get.snackbar('登录失败', '登录请求发生异常: $e'); // 显示详细错误
+      fetchVerificationCode(); // 刷新验证码
     } finally {
       isLoading.value = false;
     }
