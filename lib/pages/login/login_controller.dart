@@ -73,7 +73,6 @@ class LoginController extends GetxController {
       print(response['code']);
       if (response['code'] == 200) {
         print('Response: $response'); // Print the full response
-
         // 从响应中提取数据
         var data = response['data'];
         var token = data['token'];
