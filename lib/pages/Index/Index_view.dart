@@ -14,6 +14,7 @@ class IndexPage extends GetView<IndexController> {
           body: controller.isloadWelcomePage.isTrue
               ? SplashPage()
               : false
+                  // ignore: dead_code
                   ? HomePage()
                   : LoginView(),
         ));
