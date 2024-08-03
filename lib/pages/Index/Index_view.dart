@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 
 class IndexPage extends GetView<IndexController> {
   const IndexPage({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Obx(() => Scaffold(
