@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_getx_template/components/components.dart';
-import 'package:flutter_getx_template/components/custom_scaffold.dart';
-import 'package:flutter_getx_template/pages/home/home_controller.dart';
+import 'package:flutter_getx_template/components/custom_appbar.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
+
+import '../../components/custom_scaffold.dart';
+import 'home_controller.dart';
 
 class HomePage extends GetView<HomeController> {
   HomePage({Key? key}) : super(key: key);
@@ -12,8 +12,17 @@ class HomePage extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return BaseScaffold(
       appBar: MyAppBar(
-        centerTitle: true,
-        title: MyTitle('首页'),
+        centerTitle: false, // 确保标题不居中
+        title: Row(
+          children: [
+            Expanded(
+              child: Align(
+                alignment: Alignment.centerLeft, // 左对齐
+                child: MyTitle('首页'),
+              ),
+            ),
+          ],
+        ),
         leadingType: AppBarBackType.None,
       ),
       body: Container(
@@ -21,11 +30,15 @@ class HomePage extends GetView<HomeController> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Obx(() => Center(child: Text(controller.count.toString()))),
-            TextButton(onPressed: () => controller.increment(), child: Text('count++')),
+            TextButton(
+                onPressed: () => controller.increment(),
+                child: Text('count++')),
             GetBuilder<HomeController>(builder: (_) {
               return Text(controller.userName);
             }),
-            TextButton(onPressed: () => controller.changeUserName(), child: Text('changeName')),
+            TextButton(
+                onPressed: () => controller.changeUserName(),
+                child: Text('changeName')),
           ],
         ),
       ),

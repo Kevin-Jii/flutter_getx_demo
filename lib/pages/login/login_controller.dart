@@ -1,9 +1,11 @@
-import 'dart:convert'; // For base64Decode
+import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter_getx_template/utils/http_utils.dart';
+import 'package:flutter_getx_template/utils/sp_utils.dart';
 import 'package:get/get.dart';
 
-import '../../utils/http_utils.dart'; // For HttpUtils
+import 'login_model.dart'; // 导入模型
 
 class LoginController extends GetxController {
   var username = ''.obs;
@@ -61,6 +63,14 @@ class LoginController extends GetxController {
   }
 
   void login() async {
+    // 数据验证
+    if (username.value.isEmpty ||
+        password.value.isEmpty ||
+        verificationCode.value.isEmpty) {
+      Get.snackbar('登录失败', '用户名、密码或验证码不能为空');
+      return;
+    }
+
     isLoading.value = true;
     try {
       var response = await HttpUtils().post('/auth/login', params: {
@@ -70,28 +80,27 @@ class LoginController extends GetxController {
         'uuid': uuid.value
       });
 
-      print(response['code']);
-      if (response['code'] == 200) {
-        print('Response: $response'); // Print the full response
-        // 从响应中提取数据
-        var data = response['data'];
-        var token = data['token'];
-        var user = data['user'];
-        var userId = user['id'];
-        var userName = user['name'];
+      if (response is Map<String, dynamic>) {
+        if (response['code'] == 200) {
+          var userLoginResponse =
+              UserLoginResponseModel.fromJson(response['data']);
 
-        // 你可以在这里使用提取的数据，例如保存 token 和用户信息
-        print('Token: $token');
-        print('User ID: $userId');
-        print('User Name: $userName');
+          // 存储 UserLoginResponseModel
+          await SpUtils.putObject(
+              'user_login_response', userLoginResponse.toJson());
 
-        // 成功登录逻辑
-        Get.offNamed('/home');
+          // 导航到主页
+          Get.offNamed('/home');
+        } else {
+          Get.snackbar('登录失败', response['msg'] ?? '未知错误');
+          fetchVerificationCode(); // 刷新验证码
+        }
       } else {
-        // 登录失败，刷新验证码
+        Get.snackbar('登录失败', '响应数据格式不正确');
         fetchVerificationCode(); // 刷新验证码
       }
     } catch (e) {
+      print(e);
       Get.snackbar('登录失败', '登录请求发生异常: $e'); // 显示详细错误
       fetchVerificationCode(); // 刷新验证码
     } finally {
